@@ -1,8 +1,11 @@
-const CACHE_NAME = 'nexgen-ai-static-v1';
 const FILES_TO_CACHE = [
   '/',
   '/index.html',
   '/manifest.json',
+  '/Beta-version-under-maintenance/icons/android-chrome-192x192.png',
+  '/Beta-version-under-maintenance/icons/android-chrome-512x512.png',
+  '/Beta-version-under-maintenance/icons/apple-touch-icon.png',
+  '/Beta-version-under-maintenance/icons/favicon-96x96.png',
   'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap',
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css'
 ];
