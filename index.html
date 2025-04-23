@@ -1301,6 +1301,13 @@ body.dark-mode {
         background-color: var(--accent-color);
     }
 }
+    
+  #dev-panel {
+    font-family: monospace;
+    width: 280px;
+    border-left: 3px solid #0f0;
+    height: 100vh;
+  }
 </style>
 <body class="light-mode">
     <div class="app-container">
@@ -1362,6 +1369,15 @@ body.dark-mode {
                 <div class="chat-messages" id="chat-messages">
                     <!-- Messages will appear here -->
                 </div>
+
+                
+<!-- Secret Dev Console -->
+<div id="dev-panel" style="display:none; position:fixed; top:0; right:0; background:#111; color:#0f0; padding:10px; z-index:9999;">
+  <h4>Developer Console</h4>
+  <p>API Key: [hidden]</p>
+  <p>App Version: 1.5</p>
+  <p>Cache Status: live</p>
+</div>
                           <div id="offline-banner" style="display:none;position:fixed;top:0;left:0;width:100%;background:#f44336;color:white;padding:10px;text-align:center;z-index:1000;">
   You are offline. Some features may not work.
 </div>
@@ -1449,6 +1465,25 @@ body.dark-mode {
                         <p class="setting-description">Leave blank for default Google endpoint</p>
                     </div>
                 </div>
+                <!-- Personality Switcher -->
+<select id="personality" style="position: fixed; top: 20px; right: 20px; z-index: 9999;">
+  <option value="default">Default</option>
+  <option value="funny">Funny</option>
+  <option value="serious">Serious</option>
+  <option value="techie">Tech Nerd</option>
+  <option value="coach">Motivational Coach</option>
+</select>
+
+<!-- Background Switcher -->
+<select id="bg-selector" style="position:fixed; top:60px; right:20px; z-index:9999;">
+  <option value="none">Default</option>
+  <option value="cyber">Cyber Grid</option>
+  <option value="stars">Starry Sky</option>
+</select>
+
+<!-- Audio for Send Sound -->
+<audio id="msg-sound" src="https://freesound.org/data/previews/341/341695_5260877-lq.mp3" preload="auto"></audio>
+
                 
                 <div class="tab-content" id="model-tab">
                     <div class="setting-group">
@@ -1595,6 +1630,44 @@ body.dark-mode {
  
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.2.12/marked.min.js"></script>
+    <script>
+  // Personality Switch logic
+  function getPromptStyle(personality, userMessage) {
+    switch (personality) {
+      case "funny": return `Reply in a sarcastic, meme-style tone: ${userMessage}`;
+      case "serious": return `Reply formally and factually: ${userMessage}`;
+      case "techie": return `Respond as a software engineer or AI researcher: ${userMessage}`;
+      case "coach": return `Motivate the user like a gym coach: ${userMessage}`;
+      default: return userMessage;
+    }
+  }
+
+  // Background Selector
+  document.getElementById('bg-selector').addEventListener('change', e => {
+    const bg = e.target.value;
+    if (bg === 'cyber') {
+      document.body.style.background = "url('https://i.imgur.com/NREzF9U.gif') center/cover";
+    } else if (bg === 'stars') {
+      document.body.style.background = "url('https://i.imgur.com/SyHDe2b.gif') center/cover";
+    } else {
+      document.body.style.background = "#202124";
+    }
+  });
+
+  // Sound effect
+  function playSendSound() {
+    document.getElementById('msg-sound').play();
+  }
+
+  // Detect and show Dev Console
+  function handleDevCommand(inputValue) {
+    if (inputValue.trim() === '/dev') {
+      document.getElementById('dev-panel').style.display = 'block';
+      return true;
+    }
+    return false;
+  }
+          </script>
     <script>
   function updateOnlineStatus() {
     const banner = document.getElementById('offline-banner');
@@ -1757,6 +1830,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
                 sendMessage();
+                
             }
         });
 
@@ -1901,70 +1975,72 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     async function sendMessage() {
-    const messageText = userInput.value.trim();
-    if (messageText === '' && uploadedFiles.length === 0) return;
+  const messageText = userInput.value.trim();
+  if (messageText === '' && uploadedFiles.length === 0) return;
 
-    const fileParts = await Promise.all(uploadedFiles.map(file => {
-        return new Promise(resolve => {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                resolve({
-                    inlineData: {
-                        mimeType: file.type,
-                        data: e.target.result.split(',')[1]  // Remove base64 prefix
-                    }
-                });
-            };
-            reader.readAsDataURL(file);
-        });
-    }));
-
-    const userMessage = {
-        role: 'user',
-        content: messageText,
-        files: [...uploadedFiles],
-        timestamp: new Date().toISOString()
-    };
-
-    addMessageToChat(userMessage);
-    renderMessages();
+  // Check for secret /dev console command
+  if (handleDevCommand(messageText)) {
     userInput.value = '';
-    userInput.style.height = 'auto';
-    uploadedFiles = [];
+    return;
+  }
 
-    showTypingIndicator();
+  // Play sound
+  playSendSound();
 
-    try {
-        const response = await callGeminiAPI(messageText, fileParts);
-        hideTypingIndicator();
+  // Apply personality style
+  const personality = document.getElementById('personality')?.value || "default";
+  const finalPrompt = getPromptStyle(personality, messageText);
 
-        if (response && response.candidates && response.candidates[0].content.parts[0].text) {
-            const botResponse = response.candidates[0].content.parts[0].text;
-            const botMessage = {
-                role: 'assistant',
-                content: botResponse,
-                timestamp: new Date().toISOString()
-            };
+  // Convert uploaded files to inlineData
+  const fileParts = await Promise.all(uploadedFiles.map(file => {
+    return new Promise(resolve => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        resolve({
+          inlineData: {
+            mimeType: file.type,
+            data: e.target.result.split(',')[1]
+          }
+        });
+      };
+      reader.readAsDataURL(file);
+    });
+  }));
 
-            addMessageToChat(botMessage);
-            renderMessages();
-            updateChatTitle(messageText);
-            saveChats();
-        } else {
-            throw new Error('No valid response from the model');
-        }
-    } catch (error) {
-        hideTypingIndicator();
-        const errorMessage = {
-            role: 'assistant',
-            content: `Error: ${error.message}`,
-            timestamp: new Date().toISOString()
-        };
-        addMessageToChat(errorMessage);
-        renderMessages();
-        console.error('API Error:', error);
+  // Format user message
+  const userMessage = {
+    role: 'user',
+    content: finalPrompt,
+    files: [...uploadedFiles],
+    timestamp: new Date().toISOString()
+  };
+
+  addMessageToChat(userMessage);
+  renderMessages();
+  userInput.value = '';
+  uploadedFiles = [];
+  userInput.style.height = 'auto';
+  showTypingIndicator();
+
+  try {
+    const response = await callGeminiAPI(finalPrompt, fileParts);
+    hideTypingIndicator();
+
+    if (response && response.candidates && response.candidates[0]) {
+      const botResponse = response.candidates[0].content.parts[0].text;
+      const botMessage = {
+        role: 'assistant',
+        content: botResponse,
+        timestamp: new Date().toISOString()
+      };
+      addMessageToChat(botMessage);
+      renderMessages();
     }
-}
+  } catch (err) {
+    hideTypingIndicator();
+    console.error('Error during Gemini API call:', err);
+  }
+                }
 
      async function callGeminiAPI(prompt, fileParts = []) {
     if (!settings.apiKey) {
