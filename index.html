@@ -1592,6 +1592,21 @@ body.dark-mode {
  
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.2.12/marked.min.js"></script>
+    <script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/service-worker.js').then(reg => {
+      reg.onupdatefound = () => {
+        const newWorker = reg.installing;
+        newWorker.onstatechange = () => {
+          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+            const refresh = confirm("New version available! Do you want to update?");
+            if (refresh) newWorker.postMessage('skipWaiting');
+          }
+        };
+      };
+    });
+  }
+              </script>
    <script>
 
   window.addEventListener('load', function() {
