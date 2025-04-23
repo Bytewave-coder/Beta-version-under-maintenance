@@ -1456,6 +1456,26 @@ body.dark-mode {
         </aside>
     </div>
 
+    <div id="about-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); color:white; z-index:9999; padding:20px; overflow:auto;">
+  <h2 style="color:#00ffe1;">NEX GEN AI 1.5 Pro</h2>
+  <p>Version: <strong>1.5</strong></p>
+  <p>Created by <strong>Naman (Byteswave)</strong></p>
+  <p>Hosted on <strong>GitHub Pages</strong></p>
+  <p>Powered by: <strong>Gemini 1.5 API</strong></p>
+  <hr>
+  <h4>Features:</h4>
+  <ul>
+    <li>Offline-ready PWA</li>
+    <li>Installable App with Icons</li>
+    <li>AI Personality Switcher</li>
+    <li>Custom Background Themes</li>
+    <li>Hidden Commands</li>
+    <li>Dev Console Access</li>
+  </ul>
+  <p style="margin-top:20px;"><em>Built with love for tech and AI by Naman</em></p>
+  <button onclick="document.getElementById('about-modal').style.display='none'" style="margin-top:20px; background:#00ffe1; color:black; border:none; padding:10px 20px; border-radius:8px;">Close</button>
+    </div>
+
     <!-- Modals -->
     <div class="modal" id="settings-modal">
         <div class="modal-content">
@@ -1649,6 +1669,18 @@ body.dark-mode {
  
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.2.12/marked.min.js"></script>
+    <script>
+        function handleHiddenCommand(input) {
+  const cmd = input.trim().toLowerCase();
+
+  if (cmd === '/about') {
+    document.getElementById('about-modal').style.display = 'block';
+    return true;
+  }
+
+  return false;
+}
+    </script>
     <script>
   document.getElementById('bg-selector').addEventListener('change', function () {
     document.body.className = 'default-bg'; // Reset first
