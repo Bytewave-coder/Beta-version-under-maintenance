@@ -30,6 +30,12 @@ self.addEventListener('activate', event => {
   );
 });
 
+self.addEventListener('message', event => {
+  if (event.data === 'skipWaiting') {
+    self.skipWaiting();
+  }
+});
+
 // Fetch - serve from cache, fallback to network
 self.addEventListener('fetch', event => {
   event.respondWith(
