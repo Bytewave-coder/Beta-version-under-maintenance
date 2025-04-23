@@ -1,0 +1,10 @@
+{
+  "name": "NEX GEN AI 1.5 Pro",
+  "short_name": "NEX GEN AI",
+  "description": "An advanced Gemini-powered chatbot built by Naman.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#202124",
+  "theme_color": "#4285f4",
+  "orientation": "portrait"
+}
