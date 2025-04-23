@@ -1330,6 +1330,7 @@ body.dark-mode {
                     <span>User</span>
                 </div>
             </div>
+         <button id="install-btn" style="position: fixed; bottom: 20px; right: 20px; z-index: 9999; padding: 12px 16px; background: #4285f4; color: white; border: none; border-radius: 8px; cursor: pointer;">Install App</button>
          <button class="delete-history-btn" id="delete-history-btn">
     <i class="fas fa-trash"></i> Delete Chat History
 </button>
@@ -1361,7 +1362,9 @@ body.dark-mode {
                 <div class="chat-messages" id="chat-messages">
                     <!-- Messages will appear here -->
                 </div>
-                          
+                          <div id="offline-banner" style="display:none;position:fixed;top:0;left:0;width:100%;background:#f44336;color:white;padding:10px;text-align:center;z-index:1000;">
+  You are offline. Some features may not work.
+</div>
 
 
                 <div class="chat-input-area">
@@ -1592,6 +1595,44 @@ body.dark-mode {
  
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.2.12/marked.min.js"></script>
+    <script>
+  function updateOnlineStatus() {
+    const banner = document.getElementById('offline-banner');
+    if (navigator.onLine) {
+      banner.style.display = 'none';
+    } else {
+      banner.style.display = 'block';
+    }
+  }
+
+  window.addEventListener('online', updateOnlineStatus);
+  window.addEventListener('offline', updateOnlineStatus);
+  window.addEventListener('load', updateOnlineStatus);
+    </script>
+    <script>
+  let deferredPrompt;
+  const installBtn = document.getElementById('install-btn');
+  installBtn.style.display = 'none';
+
+  window.addEventListener('beforeinstallprompt', e => {
+    e.preventDefault();
+    deferredPrompt = e;
+    installBtn.style.display = 'block';
+  });
+
+  installBtn.addEventListener('click', () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then(choice => {
+        if (choice.outcome === 'accepted') {
+          console.log('App installed');
+        }
+        installBtn.style.display = 'none';
+        deferredPrompt = null;
+      });
+    }
+  });
+    </script>
     <script>
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/service-worker.js').then(reg => {
