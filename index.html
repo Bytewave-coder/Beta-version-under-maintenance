@@ -1494,11 +1494,11 @@ body.dark-mode {
   <option value="coach">Motivational Coach</option>
 </select>
 
-<!-- Background Switcher -->
-<select id="bg-selector" style="position:fixed; top:60px; right:20px; z-index:9999;">
+<select id="bg-selector" style="position: fixed; top: 100px; right: 20px; z-index: 9999;">
   <option value="none">Default</option>
   <option value="cyber">Cyber Grid</option>
   <option value="stars">Starry Sky</option>
+  <option value="matrix">Matrix</option>
 </select>
 
 <!-- Audio for Send Sound -->
@@ -1651,6 +1651,24 @@ body.dark-mode {
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.2.12/marked.min.js"></script>
     <script>
+  document.getElementById('bg-selector').addEventListener('change', function () {
+    document.body.className = 'default-bg'; // Reset first
+    const selected = this.value;
+
+    switch (selected) {
+      case 'cyber': document.body.classList.add('cyber-bg'); break;
+      case 'stars': document.body.classList.add('stars-bg'); break;
+      case 'matrix': document.body.classList.add('matrix-bg'); break;
+      default: document.body.className = 'default-bg';
+    }
+  });
+
+  // Set default background on load
+  window.addEventListener('load', () => {
+    document.body.classList.add('default-bg');
+  });
+    </script>
+    <script>
   // Personality Switch logic
   function getPromptStyle(personality, userMessage) {
     switch (personality) {
@@ -1661,18 +1679,6 @@ body.dark-mode {
       default: return userMessage;
     }
   }
-
-  // Background Selector
-  document.getElementById('bg-selector').addEventListener('change', e => {
-    const bg = e.target.value;
-    if (bg === 'cyber') {
-      document.body.style.background = "url('https://media2.giphy.com/media/doXBzUFJRxpaUbuaqz/giphy.gif?cid=6c09b9528h2av9er4dmbwzmpuinxkjzn7ney47n6paff532r&ep=v1_internal_gif_by_id&rid=giphy.gif&ct=g') center/cover";
-    } else if (bg === 'stars') {
-      document.body.style.background = "url('https://media2.giphy.com/media/aaTz9fnXkzoQ/giphy.gif?cid=6c09b952gaojkorz5xcenwejb14pqi9xxi8lhqrkc77moda8&ep=v1_internal_gif_by_id&rid=giphy.gif&ct=g') center/cover";
-    } else if (bg === 'Matrix') {
-      document.body.style.background = "url('https://media4.giphy.com/media/7FrOU9tPbgAZtxV5mb/giphy.gif?cid=6c09b952cfv4mp8vdo2j67c91r4qeyevvwcoevtu7as83fkz&ep=v1_internal_gif_by_id&rid=giphy.gif&ct=g') center/cover";
-    }
-  });
 
   // Sound effect
   function playSendSound() {
