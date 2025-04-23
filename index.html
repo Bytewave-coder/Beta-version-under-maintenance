@@ -1670,16 +1670,13 @@ body.dark-mode {
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.2.12/marked.min.js"></script>
     <script>
-        function handleHiddenCommand(input) {
-  const cmd = input.trim().toLowerCase();
-
-  if (cmd === '/about') {
-    document.getElementById('about-modal').style.display = 'block';
-    return true;
-  }
-
-  return false;
-}
+        function hiddenCommand(inputValue) {
+    if (inputValue.trim() === '/about') {
+      document.getElementById('about-modal').style.display = 'block';
+      return true;
+    }
+    return false;
+        }
     </script>
     <script>
   document.getElementById('bg-selector').addEventListener('change', function () {
