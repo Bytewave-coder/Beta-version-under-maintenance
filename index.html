@@ -31,6 +31,7 @@
 <link rel="manifest" href="/Beta-version-under-maintenance/icons/site.webmanifest" />
    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github.min.css" rel="stylesheet">
 </head>
 <style>
@@ -1327,6 +1328,17 @@ body.dark-mode {
   body.matrix-bg {
     background-image: url('https://media4.giphy.com/media/7FrOU9tPbgAZtxV5mb/giphy.gif?cid=6c09b952cfv4mp8vdo2j67c91r4qeyevvwcoevtu7as83fkz&ep=v1_internal_gif_by_id&rid=giphy.gif&ct=g');
   }
+    #ignite-effect span {
+    animation: pulse 1s infinite;
+    text-shadow: 0 0 10px #0ff, 0 0 20px #0ff, 0 0 30px #0ff;
+  }
+
+  @keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+      }
+        
 
 </style>
 <body class="light-mode">
@@ -1390,6 +1402,9 @@ body.dark-mode {
                     <!-- Messages will appear here -->
                 </div>
 
+     <div id="ignite-effect" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:black; z-index:99999; justify-content:center; align-items:center; color:#00ffe1; font-size:32px; font-family:'Orbitron', sans-serif;">
+  <span>🔥 IGNITION UNLEASHED 🔥</span>
+     </div>
                 
 <!-- Secret Dev Console -->
 <div id="dev-panel" style="display:none; position:fixed; top:0; right:0; background:#111; color:#0f0; padding:10px; z-index:9999;">
@@ -1669,6 +1684,14 @@ body.dark-mode {
  
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.2.12/marked.min.js"></script>
+    <script>
+if (cmd === '/ignite') {
+  const overlay = document.getElementById('ignite-effect');
+  overlay.style.display = 'flex';
+  setTimeout(() => overlay.style.display = 'none', 3000); // Hide after 3 sec
+  return true;
+}
+    </script>
     <script>
         function handleHiddenCommand(input) {
   const cmd = input.trim().toLowerCase();
