@@ -1,20 +1,40 @@
-name: Deploy to GitHub Pages
+name: Build and Deploy NEXGEN AI
 
 on:
   push:
     branches:
-      - main  # or "master" if that's your default branch
+      - main
 
 jobs:
-  build:
+  build-deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - name: Setup Pages
-        uses: actions/configure-pages@v3
-      - name: Upload Artifact
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install HTML Minifier
+        run: npm install -g html-minifier
+
+      - name: Minify Single index.html
+        run: |
+          html-minifier --collapse-whitespace --remove-comments --minify-css true --minify-js true -o index.html index.html
+
+      - name: Auto-Generate Sitemap
+        run: |
+          echo '<?xml version="1.0" encoding="UTF-8"?>' > sitemap.xml
+          echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' >> sitemap.xml
+          echo '<url><loc>https://bytewave-coder.github.io/Beta-version-under-maintenance/</loc></url>' >> sitemap.xml
+          echo '</urlset>' >> sitemap.xml
+
+      - name: Upload Pages Artifact
         uses: actions/upload-pages-artifact@v2
         with:
           path: '.'
+
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v2
