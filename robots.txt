@@ -1,1 +1,3 @@
-
+User-agent: *
+Allow: /
+Sitemap: https://bytewave-coder.github.io/Beta-version-under-maintenance/sitemap.xml
