@@ -1689,6 +1689,31 @@ body.dark-mode {
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.2.12/marked.min.js"></script>
     <script>
+// Disable Right-Click Context Menu
+document.addEventListener('contextmenu', function (e) {
+  e.preventDefault();
+});
+
+// Block F12, Ctrl+Shift+I, Ctrl+U, Ctrl+Shift+C
+document.onkeydown = function (e) {
+  if (e.keyCode == 123) return false; // F12
+  if (e.ctrlKey && e.shiftKey && (e.keyCode == 'I'.charCodeAt(0))) return false; // Ctrl+Shift+I
+  if (e.ctrlKey && (e.keyCode == 'U'.charCodeAt(0))) return false; // Ctrl+U
+  if (e.ctrlKey && e.shiftKey && (e.keyCode == 'C'.charCodeAt(0))) return false; // Ctrl+Shift+C
+};
+
+// Freeze Page if DevTools Open Detected
+(function () {
+  const threshold = 160;
+  setInterval(function () {
+    if (window.outerWidth - window.innerWidth > threshold || window.outerHeight - window.innerHeight > threshold) {
+      document.body.innerHTML = '<h1 style="color:red; text-align:center; margin-top:20%;">Warning: Code inspection detected! Page locked for security.</h1>';
+      document.title = 'Blocked!';
+    }
+  }, 1000);
+})();
+    </script>
+    <script>
         function handleHiddenCommand(input) {
   const cmd = input.trim().toLowerCase();
 
