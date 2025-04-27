@@ -1,6 +1,8 @@
+const CACHE_NAME = 'nexgen-ai-v1';
 const FILES_TO_CACHE = [
   '/',
   '/index.html',
+  '/script.js',   // Added your new script
   '/manifest.json',
   '/Beta-version-under-maintenance/icons/android-chrome-192x192.png',
   '/Beta-version-under-maintenance/icons/android-chrome-512x512.png',
@@ -19,7 +21,7 @@ self.addEventListener('install', event => {
   );
 });
 
-// Activate - clean up old caches
+// Activate - clean old caches
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(keys =>
@@ -30,13 +32,14 @@ self.addEventListener('activate', event => {
   );
 });
 
+// Listen to 'skipWaiting' messages
 self.addEventListener('message', event => {
   if (event.data === 'skipWaiting') {
     self.skipWaiting();
   }
 });
 
-// Fetch - serve from cache, fallback to network
+// Fetch - respond from cache first, fallback to network
 self.addEventListener('fetch', event => {
   event.respondWith(
     caches.match(event.request).then(response =>
