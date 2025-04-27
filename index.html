@@ -1693,6 +1693,31 @@ body.dark-mode {
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.2.12/marked.min.js"></script>
     <script>
+// Set (Paste) new API Key
+function setApiKey() {
+  const newKey = prompt('Paste your Gemini API Key:');
+  if (newKey) {
+    localStorage.setItem('geminiApiKey', newKey);
+    alert('API Key saved successfully!');
+  }
+}
+
+// View Current API Key
+function viewApiKey() {
+  const savedKey = localStorage.getItem('geminiApiKey');
+  if (savedKey) {
+    alert('Your current API Key:\n\n' + savedKey);
+  } else {
+    alert('No API Key found! Please set it first.');
+  }
+}
+
+// Function to get the API key (use inside sendMessage)
+function getApiKey() {
+  return localStorage.getItem('geminiApiKey');
+}
+    </script>
+    <script>
 // Disable Right-Click Context Menu
 document.addEventListener('contextmenu', function (e) {
   e.preventDefault();
