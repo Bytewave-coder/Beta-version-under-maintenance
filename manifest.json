@@ -1,28 +1,30 @@
 {
   "name": "NEX GEN AI 1.5 Pro",
   "short_name": "NEX GEN AI",
-  "description": "An advanced Gemini-powered chatbot built by Naman.",
+  "description": "NEX GEN AI is a futuristic, Gemini-powered chatbot created by Naman (Byteswave). Offline support, AI personalities, PWA installable!",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#202124",
   "theme_color": "#4285f4",
   "orientation": "portrait",
+  "scope": "./",
   "icons": [
     {
       "src": "/Beta-version-under-maintenance/icons/android-chrome-192x192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
       "src": "/Beta-version-under-maintenance/icons/android-chrome-512x512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
       "src": "/Beta-version-under-maintenance/icons/apple-touch-icon.png",
       "sizes": "180x180",
-      "type": "image/png",
-      "purpose": "any"
+      "type": "image/png"
     },
     {
       "src": "/Beta-version-under-maintenance/icons/favicon-96x96.png",
