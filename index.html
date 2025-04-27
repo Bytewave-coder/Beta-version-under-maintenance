@@ -1513,8 +1513,12 @@ body.dark-mode {
                     <div class="setting-group">
                         <label for="api-key">API Key</label>
                         <div class="input-with-action">
-                            <input type="password" id="api-key" placeholder="Enter your Gemini API key">
+                            <input type="user" id="api-key" placeholder="Enter your Gemini API key">
                             <button class="action-btn" id="test-api-btn">Test</button>
+                            <div style="position: fixed; top: 10px; right: 10px; z-index: 9999;">
+  <button onclick="setApiKey()" style="margin-right:5px;">Set API Key</button>
+  <button onclick="viewApiKey()">View API Key</button>
+                            </div>
                         </div>
                         <p class="setting-description">Keep your API key secure. Consider using environment variables in production.</p>
                     </div>
