@@ -428,66 +428,128 @@ document.addEventListener('DOMContentLoaded', function() {
         saveChats();
     }
 
-    function renderMessages() {
-        chatMessages.innerHTML = '';
-        
-        chats[currentChatId].messages.forEach(message => {
-            const messageElement = createMessageElement(message);
-            chatMessages.appendChild(messageElement);
-        });
-        
-        if (settings.autoScroll) {
-            scrollToBottom();
-        }
-    }
+    // ——————————————————————————————
+// Message utilities
+// ——————————————————————————————
 
-    function createMessageElement(message) {
-        const messageDiv = document.createElement('div');
-        messageDiv.className = `message ${message.role}-message`;
-        
-        const avatar = document.createElement('div');
-        avatar.className = 'message-avatar';
-        avatar.innerHTML = message.role === 'user' ? '<i class="fas fa-user"></i>' : '<i class="fas fa-robot"></i>';
-        
-        const contentDiv = document.createElement('div');
-        contentDiv.className = 'message-content';
-        
-        const textDiv = document.createElement('div');
-        textDiv.className = 'message-text';
-        
-        if (settings.markdownRender && message.content) {
-            textDiv.innerHTML = marked.parse(message.content);
-        } else {
-            textDiv.textContent = message.content || '';
-        }
-        
-        // Add file previews if any
-        if (message.files && message.files.length > 0) {
-            message.files.forEach(file => {
-                const fileElement = createFileElement(file);
-                textDiv.appendChild(fileElement);
-            });
-        }
-        
-        const timeDiv = document.createElement('div');
-        timeDiv.className = 'message-time';
-        timeDiv.textContent = formatTime(message.timestamp);
-        
-        contentDiv.appendChild(textDiv);
-        contentDiv.appendChild(timeDiv);
-        
-        messageDiv.appendChild(avatar);
-        messageDiv.appendChild(contentDiv);
-        
-        // Apply syntax highlighting
-        if (settings.syntaxHighlight) {
-            document.querySelectorAll('pre code').forEach(block => {
-                hljs.highlightElement(block);
-            });
-        }
-        
-        return messageDiv;
+// Edit a message in-place
+function editMessage(index) {
+  const chat = chats[currentChatId];
+  const msg = chat.messages[index];
+  const newText = prompt("Edit this message:", msg.content);
+  if (newText !== null) {
+    msg.content = newText;
+    saveChats();
+    renderMessages();
+  }
+}
+
+// Copy message text to clipboard
+function copyMessage(text) {
+  navigator.clipboard.writeText(text)
+    .then(() => console.log("Copied:", text))
+    .catch(err => console.error("Copy failed:", err));
+}
+
+    // 1) renderMessages now passes an index (idx) to createMessageElement
+function renderMessages() {
+  chatMessages.innerHTML = '';
+
+  chats[currentChatId].messages.forEach((message, idx) => {
+    const messageElement = createMessageElement(message, idx);
+    chatMessages.appendChild(messageElement);
+  });
+
+  if (settings.autoScroll) {
+    scrollToBottom();
+  }
+}
+
+// 2) createMessageElement now accepts idx and appends ✏️ & 📋 buttons
+function createMessageElement(message, idx) {
+  const messageDiv = document.createElement('div');
+  messageDiv.className = `message ${message.role}-message`;
+
+  const avatar = document.createElement('div');
+  avatar.className = 'message-avatar';
+  avatar.innerHTML = message.role === 'user'
+    ? '<i class="fas fa-user"></i>'
+    : '<i class="fas fa-robot"></i>';
+
+  const contentDiv = document.createElement('div');
+  contentDiv.className = 'message-content';
+
+  const textDiv = document.createElement('div');
+  textDiv.className = 'message-text';
+  if (settings.markdownRender && message.content) {
+    textDiv.innerHTML = marked.parse(message.content);
+  } else {
+    textDiv.textContent = message.content || '';
+  }
+
+  // File previews
+  if (message.files && message.files.length > 0) {
+    message.files.forEach(file => {
+      const fileElement = createFileElement(file);
+      textDiv.appendChild(fileElement);
+    });
+  }
+
+  // Time
+  const timeDiv = document.createElement('div');
+  timeDiv.className = 'message-time';
+  timeDiv.textContent = formatTime(message.timestamp);
+
+  // Assemble content
+  contentDiv.appendChild(textDiv);
+  contentDiv.appendChild(timeDiv);
+
+  // === NEW: Edit & Copy buttons ===
+  const btnContainer = document.createElement('div');
+  btnContainer.style.display = 'flex';
+  btnContainer.style.gap = '8px';
+  btnContainer.style.marginTop = '6px';
+
+  const editBtn = document.createElement('i');
+  editBtn.className = 'fas fa-edit';
+  editBtn.title = 'Edit this message';
+  editBtn.style.cursor = 'pointer';
+  editBtn.onclick = () => {
+    const newText = prompt('Edit your message:', message.content);
+    if (newText !== null) {
+      chats[currentChatId].messages[idx].content = newText;
+      saveChats();
+      renderMessages();
     }
+  };
+
+  const copyBtn = document.createElement('i');
+  copyBtn.className = 'fas fa-copy';
+  copyBtn.title = 'Copy message text';
+  copyBtn.style.cursor = 'pointer';
+  copyBtn.onclick = () => {
+    navigator.clipboard.writeText(message.content)
+      .then(() => console.log('Copied:', message.content))
+      .catch(err => console.error('Copy failed:', err));
+  };
+
+  btnContainer.appendChild(editBtn);
+  btnContainer.appendChild(copyBtn);
+  contentDiv.appendChild(btnContainer);
+
+  // Syntax highlight if needed
+  if (settings.syntaxHighlight) {
+    document.querySelectorAll('pre code').forEach(block => {
+      hljs.highlightElement(block);
+    });
+  }
+
+  // Final assembly
+  messageDiv.appendChild(avatar);
+  messageDiv.appendChild(contentDiv);
+  return messageDiv;
+}
+        
 
     function createFileElement(file) {
         const fileDiv = document.createElement('div');
