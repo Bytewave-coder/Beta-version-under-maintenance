@@ -1404,35 +1404,35 @@ body.dark-mode {
 }
 
 #scroll-down-btn {
-  position: absolute; /* absolute inside the chat-messages container */
-  right: 20px;         /* close to the right border */
-  bottom: 80px;        /* just above last message area */
+  position: fixed; /* stay fixed on screen */
+  left: calc(100% - 80px); /* adjust from right edge */
+  bottom: 120px; /* height above the input area */
   width: 48px;
   height: 48px;
   border: none;
   border-radius: 50%;
   background: var(--primary-color);
   color: white;
-  display: none; /* hidden initially */
+  display: flex;
   align-items: center;
   justify-content: center;
   box-shadow: 0 2px 8px var(--shadow-color);
   cursor: pointer;
   opacity: 0;
-  transition: opacity 0.3s ease, transform 0.3s ease;
-  z-index: 50; /* above chat text but under menus */
+  transition: opacity 0.3s, transform 0.3s;
+  z-index: 500; /* make sure it's above messages */
 }
 
-/* Show/Hide animation */
+/* Show/Hide Animations */
 #scroll-down-btn.show {
-  display: flex;
   opacity: 1;
   transform: translateY(0);
 }
 #scroll-down-btn.hide {
   opacity: 0;
   transform: translateY(20px);
-    }
+      }
+    
 </style>
 <body class="light-mode">
     <div class="app-container">
