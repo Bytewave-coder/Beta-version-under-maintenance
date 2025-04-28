@@ -643,6 +643,33 @@ document.addEventListener('DOMContentLoaded', function() {
         showToast('New chat created');
     }
 
+    // Prompt user to rename a chat
+function renameChat(chatId) {
+  const chat = chats[chatId];
+  const newTitle = prompt('Enter new chat name:', chat.title);
+  if (newTitle !== null && newTitle.trim() !== '') {
+    chats[chatId].title = newTitle.trim();
+    saveChats();
+    renderChatHistory();
+  }
+}
+
+// Delete a single chat
+function deleteChat(chatId) {
+  if (confirm('Delete this chat? This cannot be undone.')) {
+    delete chats[chatId];
+    // if we deleted the current chat, pick another or create new
+    if (currentChatId === chatId) {
+      const remaining = Object.keys(chats);
+      currentChatId = remaining.length ? remaining[0] : generateChatId();
+      if (!chats[currentChatId]) initChat();
+    }
+    saveChats();
+    renderMessages();
+    renderChatHistory();
+  }
+}
+    
     function loadChat(chatId) {
         currentChatId = chatId;
         renderMessages();
@@ -663,21 +690,43 @@ document.addEventListener('DOMContentLoaded', function() {
         );
         
         sortedChats.forEach(chat => {
-            const chatItem = document.createElement('div');
-            chatItem.className = `chat-item ${chat.id === currentChatId ? 'active' : ''}`;
-            chatItem.dataset.chatId = chat.id;
-            
-            const icon = document.createElement('i');
-            icon.className = 'chat-item-icon fas fa-comment';
-            
-            const title = document.createElement('span');
-            title.className = 'chat-item-title';
-            title.textContent = chat.title;
-            
-            chatItem.appendChild(icon);
-            chatItem.appendChild(title);
-            chatHistory.appendChild(chatItem);
-        });
+  const chatItem = document.createElement('div');
+  chatItem.className = `chat-item ${chat.id === currentChatId ? 'active' : ''}`;
+  chatItem.dataset.chatId = chat.id;
+
+  // icon + title
+  const icon = document.createElement('i');
+  icon.className = 'chat-item-icon fas fa-comment';
+  const title = document.createElement('span');
+  title.className = 'chat-item-title';
+  title.textContent = chat.title;
+
+  // rename button
+  const renameBtn = document.createElement('i');
+  renameBtn.className = 'fas fa-pencil-alt';
+  renameBtn.title = 'Rename chat';
+  renameBtn.style.marginRight = '8px';
+  renameBtn.onclick = e => {
+    e.stopPropagation();
+    renameChat(chat.id);
+  };
+
+  // delete button
+  const deleteBtn = document.createElement('i');
+  deleteBtn.className = 'fas fa-trash-alt';
+  deleteBtn.title = 'Delete chat';
+  deleteBtn.onclick = e => {
+    e.stopPropagation();
+    deleteChat(chat.id);
+  };
+
+  // assemble
+  chatItem.appendChild(icon);
+  chatItem.appendChild(title);
+  chatItem.appendChild(renameBtn);
+  chatItem.appendChild(deleteBtn);
+  chatHistory.appendChild(chatItem);
+});
     }
 
     function updateChatTitle(firstMessage) {
