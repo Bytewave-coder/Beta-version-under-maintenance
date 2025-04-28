@@ -1399,31 +1399,37 @@ body.dark-mode {
   user-select: text; /* enable highlight & copy */
     }
 
-    #scroll-down-btn {
-  position: fixed;
-  bottom: 80px;          /* above your input area */
-  right: 24px;           /* match your send-button margin */
-  background: var(--primary-color);
-  color: white;
-  border: none;
-  border-radius: 50%;
+    .chat-container {
+  position: relative;    /* make it the reference for absolute children */
+}
+
+#scroll-down-btn {
+  position: absolute;    /* now absolute to .chat-container */
+  bottom: 100px;         /* adjust this so it sits just above the input */
+  right: 24px;           /* match your send-button’s right margin */
   width: 48px;
   height: 48px;
-  display: none;         /* hidden by default */
+  border: none;
+  border-radius: 50%;
+  background: var(--primary-color);
+  color: white;
+  display: flex;
   align-items: center;
   justify-content: center;
   box-shadow: 0 2px 8px var(--shadow-color);
   cursor: pointer;
+  opacity: 0;
   transition: opacity 0.3s, transform 0.3s;
-  z-index: 1000;
+  z-index: 100;          /* sits above messages but below modals */
 }
 
+/* when the JS toggles .show, it becomes visible */
 #scroll-down-btn.show {
-  display: flex;
   opacity: 1;
   transform: translateY(0);
 }
 
+/* when the JS toggles .hide, it fades and moves down */
 #scroll-down-btn.hide {
   opacity: 0;
   transform: translateY(20px);
@@ -1486,13 +1492,14 @@ body.dark-mode {
                     </div>
                 </header>
 
+                
                 <div class="chat-messages" id="chat-messages">
                     <!-- Messages will appear here -->
                 </div>
-                <!-- Scroll-to-Bottom Button -->
-<button id="scroll-down-btn" title="Scroll to bottom">
+                <button id="scroll-down-btn" title="Scroll to bottom">
   <i class="fas fa-arrow-down"></i>
-</button>
+                </button>
+
                 
      <div id="loading-screen" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#0d0d0d;display:flex;justify-content:center;align-items:center;z-index:9999;flex-direction:column;">
   <h1 id="loading-logo" style="color:#00f5ff;font-family:'Inter',sans-serif;font-size:2.5em;opacity:0;transform:scale(0.8);transition:all 1s ease;">NEX GEN AI 1.5 Pro</h1>
@@ -1777,23 +1784,15 @@ body.dark-mode {
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.2.12/marked.min.js"></script>    
     <script>
-// Grab the button
 const scrollBtn = document.getElementById('scroll-down-btn');
 const chatEl   = document.getElementById('chat-messages');
 
-// Show/hide button based on scroll position
 chatEl.addEventListener('scroll', () => {
   const atBottom = chatEl.scrollHeight - chatEl.scrollTop === chatEl.clientHeight;
-  if (!atBottom) {
-    scrollBtn.classList.add('show');
-    scrollBtn.classList.remove('hide');
-  } else {
-    scrollBtn.classList.add('hide');
-    scrollBtn.classList.remove('show');
-  }
+  if (!atBottom) scrollBtn.classList.add('show'), scrollBtn.classList.remove('hide');
+  else           scrollBtn.classList.add('hide'), scrollBtn.classList.remove('show');
 });
 
-// On click, scroll all the way down
 scrollBtn.addEventListener('click', () => {
   chatEl.scrollTo({ top: chatEl.scrollHeight, behavior: 'smooth' });
 });
