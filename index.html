@@ -1406,16 +1406,16 @@ body.dark-mode {
 
 /* Scroll Button Styles */
 #scroll-down-btn {
-  position: absolute;     /* Inside chat-messages */
-  right: 16px;             /* Small margin from right */
-  bottom: 90px;            /* Lift above input area */
+  position: absolute;
+  right: 16px;
+  bottom: 90px;
   width: 50px;
   height: 50px;
   border: none;
   border-radius: 50%;
-  background: var(--primary-color, #4285f4); /* Fallback if variable missing */
+  background: var(--primary-color, #4285f4);
   color: white;
-  display: none;           /* Hidden initially */
+  display: none;
   align-items: center;
   justify-content: center;
   box-shadow: 0 2px 6px rgba(0,0,0,0.2);
@@ -1424,19 +1424,16 @@ body.dark-mode {
   transition: opacity 0.4s ease, transform 0.4s ease;
   z-index: 50;
 }
-
-/* When visible */
 #scroll-down-btn.show {
   display: flex;
   opacity: 1;
   transform: translateY(0);
 }
-
-/* When hiding */
 #scroll-down-btn.hide {
   opacity: 0;
   transform: translateY(20px);
-                               }
+}
+    
 </style>
 <body class="light-mode">
     <div class="app-container">
@@ -1790,27 +1787,37 @@ body.dark-mode {
 const scrollBtn = document.getElementById('scroll-down-btn');
 const chatMessages = document.getElementById('chat-messages');
 
-chatMessages.addEventListener('scroll', () => {
-  const scrollPosition = chatMessages.scrollTop + chatMessages.clientHeight;
-  const scrollHeight = chatMessages.scrollHeight;
+// --- Function: Detect if user manually scrolled up ---
+function handleScroll() {
+  const isAtBottom = chatMessages.scrollHeight - chatMessages.scrollTop <= chatMessages.clientHeight + 10;
 
-  // Show button if not at bottom
-  if (scrollHeight - scrollPosition > 80) {
+  if (isAtBottom) {
+    scrollBtn.classList.remove('show');
+    scrollBtn.classList.add('hide');
+  } else {
     scrollBtn.classList.add('show');
     scrollBtn.classList.remove('hide');
-  } else {
-    scrollBtn.classList.add('hide');
-    scrollBtn.classList.remove('show');
   }
-});
+}
 
-// Button click: Scroll to bottom smoothly
-scrollBtn.addEventListener('click', () => {
-  chatMessages.scrollTo({
-    top: chatMessages.scrollHeight,
-    behavior: 'smooth'
-  });
-});
+// --- Function: Smooth scroll to bottom ---
+function scrollToBottom(force = false) {
+  if (force) {
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  } else {
+    chatMessages.scrollTo({
+      top: chatMessages.scrollHeight,
+      behavior: 'smooth'
+    });
+  }
+  scrollBtn.classList.remove('show');
+  scrollBtn.classList.add('hide');
+}
+
+// --- Listen to user scroll manually ---
+chatMessages.addEventListener('scroll', handleScroll);
+
+// --- When new message comes, call scrollToBottom(true) ---
     </script>
     <script>
 // Disable Right-Click Context Menu
