@@ -1404,9 +1404,9 @@ body.dark-mode {
 }
 
 #scroll-down-btn {
-  position: fixed; /* stay fixed on screen */
-  left: calc(100% - 80px); /* adjust from right edge */
-  bottom: 120px; /* height above the input area */
+  position: absolute;    /* now absolute to .chat-container */
+  bottom: 100px;         /* adjust this so it sits just above the input */
+  right: 24px;           /* match your send-button’s right margin */
   width: 48px;
   height: 48px;
   border: none;
@@ -1420,19 +1420,20 @@ body.dark-mode {
   cursor: pointer;
   opacity: 0;
   transition: opacity 0.3s, transform 0.3s;
-  z-index: 500; /* make sure it's above messages */
+  z-index: 100;          /* sits above messages but below modals */
 }
 
-/* Show/Hide Animations */
+/* when the JS toggles .show, it becomes visible */
 #scroll-down-btn.show {
   opacity: 1;
   transform: translateY(0);
 }
+
+/* when the JS toggles .hide, it fades and moves down */
 #scroll-down-btn.hide {
   opacity: 0;
   transform: translateY(20px);
-      }
-    
+    }
 </style>
 <body class="light-mode">
     <div class="app-container">
