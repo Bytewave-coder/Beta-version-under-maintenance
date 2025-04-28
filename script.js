@@ -465,7 +465,6 @@ function renderMessages() {
   }
 }
 
-// 2) createMessageElement now accepts idx and appends ✏️ & 📋 buttons
 function createMessageElement(message, idx) {
   const messageDiv = document.createElement('div');
   messageDiv.className = `message ${message.role}-message`;
@@ -500,29 +499,33 @@ function createMessageElement(message, idx) {
   timeDiv.className = 'message-time';
   timeDiv.textContent = formatTime(message.timestamp);
 
-  // Assemble content
   contentDiv.appendChild(textDiv);
   contentDiv.appendChild(timeDiv);
 
-  // === NEW: Edit & Copy buttons ===
+  // === Button container ===
   const btnContainer = document.createElement('div');
   btnContainer.style.display = 'flex';
   btnContainer.style.gap = '8px';
   btnContainer.style.marginTop = '6px';
 
-  const editBtn = document.createElement('i');
-  editBtn.className = 'fas fa-edit';
-  editBtn.title = 'Edit this message';
-  editBtn.style.cursor = 'pointer';
-  editBtn.onclick = () => {
-    const newText = prompt('Edit your message:', message.content);
-    if (newText !== null) {
-      chats[currentChatId].messages[idx].content = newText;
-      saveChats();
-      renderMessages();
-    }
-  };
+  // Only add Edit button for user messages
+  if (message.role === 'user') {
+    const editBtn = document.createElement('i');
+    editBtn.className = 'fas fa-edit';
+    editBtn.title = 'Edit this message';
+    editBtn.style.cursor = 'pointer';
+    editBtn.onclick = () => {
+      const newText = prompt('Edit your message:', message.content);
+      if (newText !== null) {
+        chats[currentChatId].messages[idx].content = newText;
+        saveChats();
+        renderMessages();
+      }
+    };
+    btnContainer.appendChild(editBtn);
+  }
 
+  // Copy button for all messages
   const copyBtn = document.createElement('i');
   copyBtn.className = 'fas fa-copy';
   copyBtn.title = 'Copy message text';
@@ -532,9 +535,8 @@ function createMessageElement(message, idx) {
       .then(() => console.log('Copied:', message.content))
       .catch(err => console.error('Copy failed:', err));
   };
-
-  btnContainer.appendChild(editBtn);
   btnContainer.appendChild(copyBtn);
+
   contentDiv.appendChild(btnContainer);
 
   // Syntax highlight if needed
@@ -544,13 +546,11 @@ function createMessageElement(message, idx) {
     });
   }
 
-  // Final assembly
   messageDiv.appendChild(avatar);
   messageDiv.appendChild(contentDiv);
   return messageDiv;
-}
-        
-
+      }
+    
     function createFileElement(file) {
         const fileDiv = document.createElement('div');
         fileDiv.className = 'file-preview';
