@@ -461,7 +461,7 @@ function renderMessages() {
   });
 
   if (settings.autoScroll) {
-    scrollToBottom();
+    scrollToBottom(true);
   }
 }
 
