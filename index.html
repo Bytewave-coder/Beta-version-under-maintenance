@@ -1399,41 +1399,44 @@ body.dark-mode {
   user-select: text; /* enable highlight & copy */
     }
 
-    .chat-container {
-  position: relative;    /* make it the reference for absolute children */
+    .chat-messages {
+  position: relative; /* Important: make chat area relative */
+  overflow-y: auto;   /* Make sure it's scrollable */
 }
 
+/* Scroll Button Styles */
 #scroll-down-btn {
-  position: absolute;    /* now absolute to .chat-container */
-  bottom: 100px;         /* adjust this so it sits just above the input */
-  right: 24px;           /* match your send-button’s right margin */
-  width: 48px;
-  height: 48px;
+  position: absolute;     /* Inside chat-messages */
+  right: 16px;             /* Small margin from right */
+  bottom: 90px;            /* Lift above input area */
+  width: 50px;
+  height: 50px;
   border: none;
   border-radius: 50%;
-  background: var(--primary-color);
+  background: var(--primary-color, #4285f4); /* Fallback if variable missing */
   color: white;
-  display: flex;
+  display: none;           /* Hidden initially */
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 8px var(--shadow-color);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
   cursor: pointer;
   opacity: 0;
-  transition: opacity 0.3s, transform 0.3s;
-  z-index: 100;          /* sits above messages but below modals */
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  z-index: 50;
 }
 
-/* when the JS toggles .show, it becomes visible */
+/* When visible */
 #scroll-down-btn.show {
+  display: flex;
   opacity: 1;
   transform: translateY(0);
 }
 
-/* when the JS toggles .hide, it fades and moves down */
+/* When hiding */
 #scroll-down-btn.hide {
   opacity: 0;
   transform: translateY(20px);
-    }
+                               }
 </style>
 <body class="light-mode">
     <div class="app-container">
@@ -1785,16 +1788,28 @@ body.dark-mode {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.2.12/marked.min.js"></script>    
     <script>
 const scrollBtn = document.getElementById('scroll-down-btn');
-const chatEl   = document.getElementById('chat-messages');
+const chatMessages = document.getElementById('chat-messages');
 
-chatEl.addEventListener('scroll', () => {
-  const atBottom = chatEl.scrollHeight - chatEl.scrollTop === chatEl.clientHeight;
-  if (!atBottom) scrollBtn.classList.add('show'), scrollBtn.classList.remove('hide');
-  else           scrollBtn.classList.add('hide'), scrollBtn.classList.remove('show');
+chatMessages.addEventListener('scroll', () => {
+  const scrollPosition = chatMessages.scrollTop + chatMessages.clientHeight;
+  const scrollHeight = chatMessages.scrollHeight;
+
+  // Show button if not at bottom
+  if (scrollHeight - scrollPosition > 80) {
+    scrollBtn.classList.add('show');
+    scrollBtn.classList.remove('hide');
+  } else {
+    scrollBtn.classList.add('hide');
+    scrollBtn.classList.remove('show');
+  }
 });
 
+// Button click: Scroll to bottom smoothly
 scrollBtn.addEventListener('click', () => {
-  chatEl.scrollTo({ top: chatEl.scrollHeight, behavior: 'smooth' });
+  chatMessages.scrollTo({
+    top: chatMessages.scrollHeight,
+    behavior: 'smooth'
+  });
 });
     </script>
     <script>
