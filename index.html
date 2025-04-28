@@ -1787,9 +1787,9 @@ body.dark-mode {
 const scrollBtn = document.getElementById('scroll-down-btn');
 const chatMessages = document.getElementById('chat-messages');
 
-// --- Function: Detect if user manually scrolled up ---
+// --- Detect if user manually scrolled ---
 function handleScroll() {
-  const isAtBottom = chatMessages.scrollHeight - chatMessages.scrollTop <= chatMessages.clientHeight + 10;
+  const isAtBottom = Math.abs(chatMessages.scrollHeight - chatMessages.scrollTop - chatMessages.clientHeight) < 10;
 
   if (isAtBottom) {
     scrollBtn.classList.remove('show');
@@ -1800,7 +1800,7 @@ function handleScroll() {
   }
 }
 
-// --- Function: Smooth scroll to bottom ---
+// --- Smooth scroll to bottom ---
 function scrollToBottom(force = false) {
   if (force) {
     chatMessages.scrollTop = chatMessages.scrollHeight;
@@ -1810,14 +1810,19 @@ function scrollToBottom(force = false) {
       behavior: 'smooth'
     });
   }
+  
+  // Always hide the button after scroll
   scrollBtn.classList.remove('show');
   scrollBtn.classList.add('hide');
 }
 
-// --- Listen to user scroll manually ---
+// --- Listen to manual scroll ---
 chatMessages.addEventListener('scroll', handleScroll);
 
-// --- When new message comes, call scrollToBottom(true) ---
+// --- Button click: Scroll down nicely ---
+scrollBtn.addEventListener('click', () => {
+  scrollToBottom(false); // smooth scroll
+});
     </script>
     <script>
 // Disable Right-Click Context Menu
