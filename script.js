@@ -567,7 +567,7 @@ function createMessageElement(message, idx) {
 
     const sizeSpan = document.createElement('span');
     sizeSpan.className = 'file-size';
-    sizeSpan.textContent = file?.size ? formatFileSize(file.size) : 'Unknown size';
+    sizeSpan.textContent = (file?.size || file?.size === 0) ? formatFileSize(file.size) : 'Unknown size';
 
     infoDiv.appendChild(nameSpan);
     infoDiv.appendChild(document.createElement('br'));
@@ -577,6 +577,50 @@ function createMessageElement(message, idx) {
     fileDiv.appendChild(infoDiv);
 
     return fileDiv;
+}
+
+function showTypingIndicator() {
+    const typingDiv = document.createElement('div');
+    typingDiv.className = 'message bot-message';
+    typingDiv.id = 'typing-indicator';
+
+    const avatar = document.createElement('div');
+    avatar.className = 'message-avatar';
+    avatar.innerHTML = '<i class="fas fa-robot"></i>';
+
+    const contentDiv = document.createElement('div');
+    contentDiv.className = 'message-content';
+
+    const typingIndicator = document.createElement('div');
+    typingIndicator.className = 'typing-indicator';
+
+    for (let i = 0; i < 3; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'typing-dot';
+        typingIndicator.appendChild(dot);
+    }
+
+    contentDiv.appendChild(typingIndicator);
+    typingDiv.appendChild(avatar);
+    typingDiv.appendChild(contentDiv);
+
+    chatMessages.appendChild(typingDiv);
+    scrollToBottom();
+}
+
+function hideTypingIndicator() {
+    const typingIndicator = document.getElementById('typing-indicator');
+    if (typingIndicator) {
+        typingIndicator.remove();
+    }
+}
+
+function handleFileUpload(event) {
+    const files = Array.from(event.target.files);
+    if (files.length === 0) return;
+
+    uploadedFiles = files;
+    showFilePreviewModal(files);
 }
 
 function showFilePreviewModal(files) {
@@ -602,7 +646,7 @@ function showFilePreviewModal(files) {
 
         const sizeSpan = document.createElement('span');
         sizeSpan.className = 'file-size';
-        sizeSpan.textContent = file?.size ? formatFileSize(file.size) : 'Unknown size';
+        sizeSpan.textContent = (file?.size || file?.size === 0) ? formatFileSize(file.size) : 'Unknown size';
 
         infoDiv.appendChild(nameSpan);
         infoDiv.appendChild(document.createElement('br'));
@@ -644,12 +688,16 @@ function getFileIconClass(fileType) {
 }
 
 function formatFileSize(bytes) {
-    if (!bytes || isNaN(bytes)) return 'Unknown size';
+    if (bytes === undefined || bytes === null || isNaN(bytes)) return 'Unknown size';
+    if (bytes === 0) return '0 Bytes';
     const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-    }
+        }
+
+    
+
 
     function createNewChat() {
         currentChatId = generateChatId();
