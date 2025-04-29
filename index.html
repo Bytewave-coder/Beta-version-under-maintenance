@@ -1825,50 +1825,57 @@ scrollBtn.addEventListener('click', () => {
 });
     </script>
     <script>
-// Disable Right-Click Context Menu
-document.addEventListener('contextmenu', function (e) {
-  e.preventDefault();
-});
+let securityBypassed = false;
 
-// Block F12, Ctrl+Shift+I, Ctrl+U, Ctrl+Shift+C
-document.onkeydown = function (e) {
-  if (e.keyCode == 123) return false; // F12
-  if (e.ctrlKey && e.shiftKey && (e.keyCode == 'I'.charCodeAt(0))) return false; // Ctrl+Shift+I
-  if (e.ctrlKey && (e.keyCode == 'U'.charCodeAt(0))) return false; // Ctrl+U
-  if (e.ctrlKey && e.shiftKey && (e.keyCode == 'C'.charCodeAt(0))) return false; // Ctrl+Shift+C
-};
+if (location.hostname !== "localhost") {
+(function() {
+    const threshold = 160;
 
-// Freeze Page if DevTools Open Detected
-(function () {
-  const threshold = 160;
-  setInterval(function () {
-    if (window.outerWidth - window.innerWidth > threshold || window.outerHeight - window.innerHeight > threshold) {
-      document.body.innerHTML = '<h1 style="color:red; text-align:center; margin-top:20%;">Warning: Code inspection detected! Page locked for security.</h1>';
-      document.title = 'Blocked!';
-    }
-  }, 1000);
-})();
-    </script>
-    <script>
-        function handleHiddenCommand(input) {
-  const cmd = input.trim().toLowerCase();
+    setInterval(() => {
+        if (securityBypassed) return;
 
-  if (cmd === '/about') {
-    document.getElementById('about-modal').style.display = 'block';
-    return true;
-  }
-
-  if (cmd === '/ignite') {
-    const overlay = document.getElementById('ignite-effect');
-    if (overlay) {
-      overlay.style.display = 'flex';
-      setTimeout(() => overlay.style.display = 'none', 3000);
-    }
-    return true;
-  }
-
-  return false;
+        const widthThreshold = window.outerWidth - window.innerWidth > threshold;
+        const heightThreshold = window.outerHeight - window.innerHeight > threshold;
+        if (widthThreshold || heightThreshold) {
+            triggerSelfDestruct();
         }
+    }, 500);
+
+    document.addEventListener('contextmenu', e => {
+        if (securityBypassed) return;
+        e.preventDefault();
+        triggerSelfDestruct();
+    });
+
+    document.addEventListener('keydown', e => {
+        if (securityBypassed) return;
+        if (
+            e.key === 'F12' ||
+            (e.ctrlKey && e.shiftKey && ['I', 'J', 'C'].includes(e.key.toUpperCase())) ||
+            (e.ctrlKey && e.key.toLowerCase() === 'u')
+        ) {
+            e.preventDefault();
+            triggerSelfDestruct();
+        }
+    });
+
+    function triggerSelfDestruct() {
+        document.body.innerHTML = `
+            <div style="display:flex;justify-content:center;align-items:center;height:100vh;background:#111;color:red;font-size:24px;font-family:sans-serif;text-align:center;padding:20px;">
+                <div>
+                    <strong>Security Violation Detected</strong><br>
+                    Access has been blocked.<br><br>
+                    <button onclick="location.reload()" style="padding:10px 20px;font-size:16px;background:red;color:#fff;border:none;border-radius:6px;cursor:pointer;margin-top:20px;">
+                        Reload Page
+                    </button>
+                </div>
+            </div>
+        `;
+        console.clear();
+        setInterval(() => {}, 1);
+    }
+})();
+}
     </script>
     <script>
   document.getElementById('bg-selector').addEventListener('change', function () {
