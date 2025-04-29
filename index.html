@@ -1433,6 +1433,72 @@ body.dark-mode {
   opacity: 0;
   transform: translateY(20px);
 }
+    #bypass-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(15, 15, 15, 0.85);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+#bypass-modal .modal-content {
+  background: #1c1c1c;
+  color: #fff;
+  padding: 30px;
+  border-radius: 10px;
+  width: 320px;
+  text-align: center;
+  box-shadow: 0 0 20px #00f7ff4f;
+  animation: scaleIn 0.3s ease;
+}
+
+#bypass-modal h2 {
+  margin-bottom: 15px;
+  color: #00f7ff;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+#bypass-password {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  background: #2a2a2a;
+  color: #00f7ff;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  font-size: 16px;
+}
+
+#bypass-modal button {
+  padding: 10px 20px;
+  border: none;
+  background: #00f7ff;
+  color: #111;
+  font-weight: bold;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+#bypass-modal button:hover {
+  background: #00d6e6;
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.7);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
     
 </style>
 <body class="light-mode">
@@ -1769,6 +1835,15 @@ body.dark-mode {
             <p id="loading-text">Processing your request</p>
         </div>
     </div>
+
+    <div id="bypass-modal">
+  <div class="modal-content">
+    <h2>Security Override</h2>
+    <input type="password" id="bypass-password" placeholder="Enter Admin Password" />
+    <br>
+    <button onclick="verifyBypassPassword()">Unlock</button>
+  </div>
+    </div>
      
 <!-- Add language supports as needed -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/components/prism-javascript.min.js"></script>
@@ -1824,7 +1899,7 @@ scrollBtn.addEventListener('click', () => {
   scrollToBottom(false); // smooth scroll
 });
     </script>
-    <script>
+<script>
 let securityBypassed = false;
 
 if (location.hostname !== "localhost") {
@@ -1876,6 +1951,33 @@ if (location.hostname !== "localhost") {
     }
 })();
 }
+    </script>
+    <script>
+    function checkBypassCommand(messageText) {
+  if (messageText.trim() === "/bypass") {
+    showBypassModal();
+    return true; // Don't send message
+  }
+  return false;
+}
+
+function showBypassModal() {
+  document.getElementById("bypass-modal").style.display = "flex";
+  setTimeout(() => {
+    document.getElementById("bypass-password").focus();
+  }, 100);
+}
+
+function verifyBypassPassword() {
+  const input = document.getElementById("bypass-password").value;
+  if (input === "nexgenadmin") {
+    securityBypassed = true;
+    alert("Security has been disabled successfully.");
+    document.getElementById("bypass-modal").style.display = "none";
+  } else {
+    alert("Incorrect password. Try again.");
+  }
+        }
     </script>
     <script>
   document.getElementById('bg-selector').addEventListener('change', function () {
