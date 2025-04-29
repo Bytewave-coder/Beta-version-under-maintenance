@@ -461,7 +461,12 @@ function renderMessages() {
   });
 
   if (settings.autoScroll) {
-    scrollToBottom(true);
+    addMessageToChat(userMessage);
+renderMessages();
+
+setTimeout(() => {
+  scrollToBottom(true);
+}, 50); // 50ms delay ensures layout settles
   }
 }
 
