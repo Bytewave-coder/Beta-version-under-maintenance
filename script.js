@@ -550,154 +550,151 @@ function createMessageElement(message, idx) {
   messageDiv.appendChild(contentDiv);
   return messageDiv;
       }
-    
     function createFileElement(file) {
-    const fileDiv = document.createElement('div');
-    fileDiv.className = 'file-preview';
-
-    const icon = document.createElement('i');
-    icon.className = getFileIconClass(file?.type);
-
-    const infoDiv = document.createElement('div');
-    infoDiv.className = 'file-info';
-
-    const nameSpan = document.createElement('span');
-    nameSpan.className = 'file-name';
-    nameSpan.textContent = file?.name || 'Unnamed file';
-
-    const sizeSpan = document.createElement('span');
-    sizeSpan.className = 'file-size';
-    sizeSpan.textContent = (file?.size || file?.size === 0) ? formatFileSize(file.size) : 'Unknown size';
-
-    infoDiv.appendChild(nameSpan);
-    infoDiv.appendChild(document.createElement('br'));
-    infoDiv.appendChild(sizeSpan);
-
-    fileDiv.appendChild(icon);
-    fileDiv.appendChild(infoDiv);
-
-    return fileDiv;
-}
-
-function showTypingIndicator() {
-    const typingDiv = document.createElement('div');
-    typingDiv.className = 'message bot-message';
-    typingDiv.id = 'typing-indicator';
-
-    const avatar = document.createElement('div');
-    avatar.className = 'message-avatar';
-    avatar.innerHTML = '<i class="fas fa-robot"></i>';
-
-    const contentDiv = document.createElement('div');
-    contentDiv.className = 'message-content';
-
-    const typingIndicator = document.createElement('div');
-    typingIndicator.className = 'typing-indicator';
-
-    for (let i = 0; i < 3; i++) {
-        const dot = document.createElement('div');
-        dot.className = 'typing-dot';
-        typingIndicator.appendChild(dot);
-    }
-
-    contentDiv.appendChild(typingIndicator);
-    typingDiv.appendChild(avatar);
-    typingDiv.appendChild(contentDiv);
-
-    chatMessages.appendChild(typingDiv);
-    scrollToBottom();
-}
-
-function hideTypingIndicator() {
-    const typingIndicator = document.getElementById('typing-indicator');
-    if (typingIndicator) {
-        typingIndicator.remove();
-    }
-}
-
-function handleFileUpload(event) {
-    const files = Array.from(event.target.files);
-    if (files.length === 0) return;
-
-    uploadedFiles = files;
-    showFilePreviewModal(files);
-}
-
-function showFilePreviewModal(files) {
-    const previewContent = document.getElementById('file-preview-content');
-    previewContent.innerHTML = '';
-
-    const fileList = document.createElement('div');
-    fileList.className = 'file-preview';
-
-    files.forEach(file => {
-        const fileItem = document.createElement('div');
-        fileItem.className = 'file-item';
-
+        const fileDiv = document.createElement('div');
+        fileDiv.className = 'file-preview';
+        
         const icon = document.createElement('i');
-        icon.className = getFileIconClass(file?.type);
-
+        icon.className = getFileIconClass(file.type);
+        
         const infoDiv = document.createElement('div');
         infoDiv.className = 'file-info';
-
+        
         const nameSpan = document.createElement('span');
         nameSpan.className = 'file-name';
-        nameSpan.textContent = file?.name || 'Unnamed file';
-
+        nameSpan.textContent = file.name;
+        
         const sizeSpan = document.createElement('span');
         sizeSpan.className = 'file-size';
-        sizeSpan.textContent = (file?.size || file?.size === 0) ? formatFileSize(file.size) : 'Unknown size';
-
+        sizeSpan.textContent = formatFileSize(file.size);
+        
         infoDiv.appendChild(nameSpan);
         infoDiv.appendChild(document.createElement('br'));
         infoDiv.appendChild(sizeSpan);
-
-        fileItem.appendChild(icon);
-        fileItem.appendChild(infoDiv);
-        fileList.appendChild(fileItem);
-    });
-
-    previewContent.appendChild(fileList);
-    filePreviewModal.style.display = 'flex';
-
-    document.getElementById('send-file-btn').addEventListener('click', () => {
-        filePreviewModal.style.display = 'none';
-    });
-}
-
-function getFileIconClass(fileType) {
-    if (!fileType) return 'fas fa-file';
-
-    const typeMap = {
-        'image/': 'fas fa-image',
-        'application/pdf': 'fas fa-file-pdf',
-        'text/': 'fas fa-file-alt',
-        'application/msword': 'fas fa-file-word',
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'fas fa-file-word',
-        'application/vnd.ms-excel': 'fas fa-file-excel',
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'fas fa-file-excel',
-        'application/vnd.ms-powerpoint': 'fas fa-file-powerpoint',
-        'application/vnd.openxmlformats-officedocument.presentationml.presentation': 'fas fa-file-powerpoint'
-    };
-
-    for (const [prefix, icon] of Object.entries(typeMap)) {
-        if (fileType.startsWith(prefix)) return icon;
+        
+        fileDiv.appendChild(icon);
+        fileDiv.appendChild(infoDiv);
+        
+        return fileDiv;
     }
 
-    return 'fas fa-file';
-}
-
-function formatFileSize(bytes) {
-    if (bytes === undefined || bytes === null || isNaN(bytes)) return 'Unknown size';
-    if (bytes === 0) return '0 Bytes';
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    function showTypingIndicator() {
+        const typingDiv = document.createElement('div');
+        typingDiv.className = 'message bot-message';
+        typingDiv.id = 'typing-indicator';
+        
+        const avatar = document.createElement('div');
+        avatar.className = 'message-avatar';
+        avatar.innerHTML = '<i class="fas fa-robot"></i>';
+        
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'message-content';
+        
+        const typingIndicator = document.createElement('div');
+        typingIndicator.className = 'typing-indicator';
+        
+        for (let i = 0; i < 3; i++) {
+            const dot = document.createElement('div');
+            dot.className = 'typing-dot';
+            typingIndicator.appendChild(dot);
         }
+        
+        contentDiv.appendChild(typingIndicator);
+        typingDiv.appendChild(avatar);
+        typingDiv.appendChild(contentDiv);
+        
+        chatMessages.appendChild(typingDiv);
+        scrollToBottom();
+    }
 
-    
+    function hideTypingIndicator() {
+        const typingIndicator = document.getElementById('typing-indicator');
+        if (typingIndicator) {
+            typingIndicator.remove();
+        }
+    }
 
+    function handleFileUpload(event) {
+        const files = Array.from(event.target.files);
+        if (files.length === 0) return;
+        
+        uploadedFiles = files;
+        showFilePreviewModal(files);
+    }
+
+    function showFilePreviewModal(files) {
+        const previewContent = document.getElementById('file-preview-content');
+        previewContent.innerHTML = '';
+        
+        const fileList = document.createElement('div');
+        fileList.className = 'file-preview';
+        
+        files.forEach(file => {
+            const fileItem = document.createElement('div');
+            fileItem.className = 'file-item';
+            
+            const icon = document.createElement('i');
+            icon.className = getFileIconClass(file.type);
+            
+            const infoDiv = document.createElement('div');
+            infoDiv.className = 'file-info';
+            
+            const nameSpan = document.createElement('span');
+            nameSpan.className = 'file-name';
+            nameSpan.textContent = file.name;
+            
+            const sizeSpan = document.createElement('span');
+            sizeSpan.className = 'file-size';
+            sizeSpan.textContent = formatFileSize(file.size);
+            
+            infoDiv.appendChild(nameSpan);
+            infoDiv.appendChild(document.createElement('br'));
+            infoDiv.appendChild(sizeSpan);
+            
+            fileItem.appendChild(icon);
+            fileItem.appendChild(infoDiv);
+            fileList.appendChild(fileItem);
+        });
+        
+        previewContent.appendChild(fileList);
+        filePreviewModal.style.display = 'flex';
+        
+        document.getElementById('send-file-btn').addEventListener('click', () => {
+            filePreviewModal.style.display = 'none';
+        });
+    }
+
+    function getFileIconClass(fileType) {
+        if (!fileType) return 'fas fa-file';
+        
+        const typeMap = {
+            'image/': 'fas fa-image',
+            'application/pdf': 'fas fa-file-pdf',
+            'text/': 'fas fa-file-alt',
+            'application/msword': 'fas fa-file-word',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'fas fa-file-word',
+            'application/vnd.ms-excel': 'fas fa-file-excel',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'fas fa-file-excel',
+            'application/vnd.ms-powerpoint': 'fas fa-file-powerpoint',
+            'application/vnd.openxmlformats-officedocument.presentationml.presentation': 'fas fa-file-powerpoint'
+        };
+        
+        for (const [prefix, icon] of Object.entries(typeMap)) {
+            if (fileType.startsWith(prefix)) {
+                return icon;
+            }
+        }
+        
+        return 'fas fa-file';
+    }
+
+    function formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
 
     function createNewChat() {
         currentChatId = generateChatId();
