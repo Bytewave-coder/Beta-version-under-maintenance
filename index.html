@@ -1899,10 +1899,17 @@ scrollBtn.addEventListener('click', () => {
   scrollToBottom(false); // smooth scroll
 });
     </script>
-<script>
+
+    <script>
 let securityBypassed = false;
 
-if (location.hostname !== "localhost") {
+// Check if it's a mobile device
+function isMobileDevice() {
+  return /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
+
+// Enable security only on desktop and not localhost
+if (location.hostname !== "localhost" && !isMobileDevice()) {
 (function() {
     const threshold = 160;
 
@@ -1947,9 +1954,24 @@ if (location.hostname !== "localhost") {
             </div>
         `;
         console.clear();
-        setInterval(() => {}, 1);
+        setInterval(() => {}, 1); // freeze tab
     }
 })();
+}
+
+// This should go inside your chatbot message handler
+function checkBypassCommand(messageText) {
+    if (messageText.trim() === "/bypass") {
+        const pass = prompt("Enter security bypass password:");
+        if (pass === "nexgenadmin") {
+            securityBypassed = true;
+            alert("Security protection disabled.");
+        } else {
+            alert("Incorrect password. Try again.");
+        }
+        return true;
+    }
+    return false;
 }
     </script>
     <script>
