@@ -461,12 +461,7 @@ function renderMessages() {
   });
 
   if (settings.autoScroll) {
-    addMessageToChat(userMessage);
-renderMessages();
-
-setTimeout(() => {
-  scrollToBottom(true);
-}, 50); // 50ms delay ensures layout settles
+  scrollToBottom();// 50ms delay ensures layout settles
   }
 }
 
