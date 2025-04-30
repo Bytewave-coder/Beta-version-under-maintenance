@@ -231,7 +231,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   // Check for secret /dev console command
-if (checkBypassCommand(messageText)) || handleHiddenCommand(messageText)) {
+  if (handleDevCommand(messageText) || handleHiddenCommand(messageText)) {
   userInput.value = '';
   return;
   }
