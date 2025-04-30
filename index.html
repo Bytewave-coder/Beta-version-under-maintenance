@@ -1433,73 +1433,6 @@ body.dark-mode {
   opacity: 0;
   transform: translateY(20px);
 }
-    #bypass-modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(15, 15, 15, 0.85);
-  display: none;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-}
-
-#bypass-modal .modal-content {
-  background: #1c1c1c;
-  color: #fff;
-  padding: 30px;
-  border-radius: 10px;
-  width: 320px;
-  text-align: center;
-  box-shadow: 0 0 20px #00f7ff4f;
-  animation: scaleIn 0.3s ease;
-}
-
-#bypass-modal h2 {
-  margin-bottom: 15px;
-  color: #00f7ff;
-  font-family: 'Segoe UI', sans-serif;
-}
-
-#bypass-password {
-  width: 100%;
-  padding: 10px;
-  border: none;
-  background: #2a2a2a;
-  color: #00f7ff;
-  border-radius: 5px;
-  margin-bottom: 20px;
-  font-size: 16px;
-}
-
-#bypass-modal button {
-  padding: 10px 20px;
-  border: none;
-  background: #00f7ff;
-  color: #111;
-  font-weight: bold;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-#bypass-modal button:hover {
-  background: #00d6e6;
-}
-
-@keyframes scaleIn {
-  from {
-    transform: scale(0.7);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-    
 </style>
 <body class="light-mode">
     <div class="app-container">
@@ -1828,23 +1761,6 @@ body.dark-mode {
         </div>
     </div>
 
-    <!-- Loading Overlay -->
-    <div class="loading-overlay" id="loading-overlay">
-        <div class="loading-content">
-            <div class="loading-spinner"></div>
-            <p id="loading-text">Processing your request</p>
-        </div>
-    </div>
-
-    <div id="bypass-modal">
-  <div class="modal-content">
-    <h2>Security Override</h2>
-    <input type="password" id="bypass-password" placeholder="Enter Admin Password" />
-    <br>
-    <button onclick="verifyBypassPassword()">Unlock</button>
-  </div>
-    </div>
-     
 <!-- Add language supports as needed -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/components/prism-javascript.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/components/prism-python.min.js"></script>
@@ -1899,108 +1815,31 @@ scrollBtn.addEventListener('click', () => {
   scrollToBottom(false); // smooth scroll
 });
     </script>
+        <script>
+// Disable Right-Click Context Menu
+document.addEventListener('contextmenu', function (e) {
+  e.preventDefault();
+});
 
-    <script>
-let securityBypassed = false;
+// Block F12, Ctrl+Shift+I, Ctrl+U, Ctrl+Shift+C
+document.onkeydown = function (e) {
+  if (e.keyCode == 123) return false; // F12
+  if (e.ctrlKey && e.shiftKey && (e.keyCode == 'I'.charCodeAt(0))) return false; // Ctrl+Shift+I
+  if (e.ctrlKey && (e.keyCode == 'U'.charCodeAt(0))) return false; // Ctrl+U
+  if (e.ctrlKey && e.shiftKey && (e.keyCode == 'C'.charCodeAt(0))) return false; // Ctrl+Shift+C
+};
 
-// Check if it's a mobile device
-function isMobileDevice() {
-  return /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-}
-
-// Enable security only on desktop and not localhost
-if (location.hostname !== "localhost" && !isMobileDevice()) {
-(function() {
-    const threshold = 160;
-
-    setInterval(() => {
-        if (securityBypassed) return;
-
-        const widthThreshold = window.outerWidth - window.innerWidth > threshold;
-        const heightThreshold = window.outerHeight - window.innerHeight > threshold;
-        if (widthThreshold || heightThreshold) {
-            triggerSelfDestruct();
-        }
-    }, 500);
-
-    document.addEventListener('contextmenu', e => {
-        if (securityBypassed) return;
-        e.preventDefault();
-        triggerSelfDestruct();
-    });
-
-    document.addEventListener('keydown', e => {
-        if (securityBypassed) return;
-        if (
-            e.key === 'F12' ||
-            (e.ctrlKey && e.shiftKey && ['I', 'J', 'C'].includes(e.key.toUpperCase())) ||
-            (e.ctrlKey && e.key.toLowerCase() === 'u')
-        ) {
-            e.preventDefault();
-            triggerSelfDestruct();
-        }
-    });
-
-    function triggerSelfDestruct() {
-        document.body.innerHTML = `
-            <div style="display:flex;justify-content:center;align-items:center;height:100vh;background:#111;color:red;font-size:24px;font-family:sans-serif;text-align:center;padding:20px;">
-                <div>
-                    <strong>Security Violation Detected</strong><br>
-                    Access has been blocked.<br><br>
-                    <button onclick="location.reload()" style="padding:10px 20px;font-size:16px;background:red;color:#fff;border:none;border-radius:6px;cursor:pointer;margin-top:20px;">
-                        Reload Page
-                    </button>
-                </div>
-            </div>
-        `;
-        console.clear();
-        setInterval(() => {}, 1); // freeze tab
+// Freeze Page if DevTools Open Detected
+(function () {
+  const threshold = 160;
+  setInterval(function () {
+    if (window.outerWidth - window.innerWidth > threshold || window.outerHeight - window.innerHeight > threshold) {
+      document.body.innerHTML = '<h1 style="color:red; text-align:center; margin-top:20%;">Warning: Code inspection detected! Page locked for security.</h1>';
+      document.title = 'Blocked!';
     }
+  }, 1000);
 })();
-}
-
-// This should go inside your chatbot message handler
-function checkBypassCommand(messageText) {
-    if (messageText.trim() === "/bypass") {
-        const pass = prompt("Enter security bypass password:");
-        if (pass === "nexgenadmin") {
-            securityBypassed = true;
-            alert("Security protection disabled.");
-        } else {
-            alert("Incorrect password. Try again.");
-        }
-        return true;
-    }
-    return false;
-}
-    </script>
-    <script>
-    function checkBypassCommand(messageText) {
-  if (messageText.trim() === "/bypass") {
-    showBypassModal();
-    return true; // Don't send message
-  }
-  return false;
-}
-
-function showBypassModal() {
-  document.getElementById("bypass-modal").style.display = "flex";
-  setTimeout(() => {
-    document.getElementById("bypass-password").focus();
-  }, 100);
-}
-
-function verifyBypassPassword() {
-  const input = document.getElementById("bypass-password").value;
-  if (input === "nexgenadmin") {
-    securityBypassed = true;
-    alert("Security has been disabled successfully.");
-    document.getElementById("bypass-modal").style.display = "none";
-  } else {
-    alert("Incorrect password. Try again.");
-  }
-        }
-    </script>
+        </script>
     <script>
   document.getElementById('bg-selector').addEventListener('change', function () {
     document.body.className = 'default-bg'; // Reset first
