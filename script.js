@@ -229,13 +229,9 @@ document.addEventListener('DOMContentLoaded', function() {
     sound.play().catch(err => console.warn('Sound play blocked:', err));
   }
   }
-if (checkBypassCommand(messageText)) {
-    userInput.value = '';
-    return; // stop sending the message
-}
 
   // Check for secret /dev console command
-  if (handleDevCommand(messageText) || handleHiddenCommand(messageText)) {
+if (checkBypassCommand(messageText)) || handleHiddenCommand(messageText)) {
   userInput.value = '';
   return;
   }
